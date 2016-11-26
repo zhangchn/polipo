@@ -406,11 +406,7 @@ httpMakeServerRequest(char *name, int port, ObjectPtr object,
 
 
     int bypassed = hostNameIsBypassed(name);
-    if (bypassed) {
-        fprintf(stderr, "bypassed======= %s\n", name); 
-    } else {
-        fprintf(stderr, "NO BYPASS>>>>>> %s\n", name);
-    }
+    
     if(parentHost && !bypassed) {
         server = getServer(parentHost->string, parentPort, 1);
     } else {
