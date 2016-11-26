@@ -404,7 +404,14 @@ httpMakeServerRequest(char *name, int port, ObjectPtr object,
 
     assert(!(object->flags & OBJECT_INPROGRESS));
 
-    if(parentHost) {
+
+    int bypassed = hostNameIsBypassed(name);
+    if (bypassed) {
+        fprintf(stderr, "bypassed======= %s\n", name); 
+    } else {
+        fprintf(stderr, "NO BYPASS>>>>>> %s\n", name);
+    }
+    if(parentHost && !bypassed) {
         server = getServer(parentHost->string, parentPort, 1);
     } else {
         server = getServer(name, port, 0);

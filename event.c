@@ -643,6 +643,7 @@ eventLoop()
                 writeoutObjects(1);
             }
             initForbidden();
+            initBypass();
             exitFlag = 0;
         }
 
