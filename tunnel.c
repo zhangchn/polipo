@@ -178,12 +178,14 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
 	logTunnel(tunnel,1);
         return;
     }
-    
+
+    int useSocks = socksParentProxy && !hostNameIsBypassed(tunnel->hostname->string);
+     
     logTunnel(tunnel,0);
     
     releaseAtom(url);
 
-    if(socksParentProxy)
+    if(useSocks)
         do_socks_connect(parentHost ?
                          parentHost->string : tunnel->hostname->string,
                          parentHost ? parentPort : tunnel->port,

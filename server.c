@@ -518,7 +518,9 @@ httpServerConnection(HTTPServerPtr server)
     do_log(D_SERVER_CONN, "C... %s:%d.\n",
            scrub(connection->server->name), connection->server->port);
     httpSetTimeout(connection, serverTimeout);
-    if(socksParentProxy) {
+    int useSocks = socksParentProxy && !hostNameIsBypassed(server->name);
+     
+    if(useSocks) {
         connection->connecting = CONNECTING_SOCKS;
         do_socks_connect(server->name, connection->server->port,
                          httpServerSocksHandler, connection);
