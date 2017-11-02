@@ -223,6 +223,7 @@ THE SOFTWARE.
 #include "http_parse.h"
 #include "parse_time.h"
 #include "forbidden.h"
+#include "bypass.h"
 #include "log.h"
 #include "auth.h"
 #include "tunnel.h"
