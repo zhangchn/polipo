@@ -48,66 +48,8 @@ extern int parentPort;
 void preinitServer(void);
 void initServer(void);
 
-void httpServerAbortHandler(ObjectPtr object);
-int httpMakeServerRequest(char *name, int port, ObjectPtr object, 
-                          int method, int from, int to,
-                          HTTPRequestPtr requestor);
-int httpServerQueueRequest(HTTPServerPtr server, HTTPRequestPtr request);
-int httpServerTrigger(HTTPServerPtr server);
-int httpServerSideRequest(HTTPServerPtr server);
 int  httpServerDoSide(HTTPConnectionPtr connection);
-int httpServerSideHandler(int status,
-                          FdEventHandlerPtr event,
-                          StreamRequestPtr srequest);
-int httpServerSideHandler2(int status,
-                           FdEventHandlerPtr event,
-                           StreamRequestPtr srequest);
-int httpServerConnectionDnsHandler(int status, 
-                                   GethostbynameRequestPtr request);
-int httpServerConnectionHandler(int status,
-                                FdEventHandlerPtr event,
-                                ConnectRequestPtr request);
-int httpServerSocksHandler(int status, SocksRequestPtr request);
-int httpServerConnectionHandlerCommon(int status,
-                                      HTTPConnectionPtr connection);
-void httpServerFinish(HTTPConnectionPtr connection, int s, int offset);
-
-void httpServerReply(HTTPConnectionPtr connection, int immediate);
-void httpServerAbort(HTTPConnectionPtr connection, int, int, struct _Atom *);
-void httpServerAbortRequest(HTTPRequestPtr request, int, int, struct _Atom *);
 void httpServerClientReset(HTTPRequestPtr request);
-void httpServerUnpipeline(HTTPRequestPtr request);
-int
-httpServerSendRequest(HTTPConnectionPtr connection);
-int
-httpServerHandler(int status, 
-                    FdEventHandlerPtr event,
-                    StreamRequestPtr request);
-int
-httpServerReplyHandler(int status,
-                       FdEventHandlerPtr event, 
-                       StreamRequestPtr request);
-int
-httpServerIndirectHandler(int status,
-                          FdEventHandlerPtr event, 
-                          StreamRequestPtr request);
-int
-httpServerDirectHandler(int status,
-                        FdEventHandlerPtr event, 
-                        StreamRequestPtr request);
-int
-httpServerDirectHandler2(int status,
-                         FdEventHandlerPtr event, 
-                         StreamRequestPtr request);
 int httpServerRequest(ObjectPtr object, int method, int from, int to,
                       HTTPRequestPtr, void*);
-int httpServerHandlerHeaders(int eof,
-                             FdEventHandlerPtr event,
-                             StreamRequestPtr request, 
-                             HTTPConnectionPtr connection);
-int httpServerReadData(HTTPConnectionPtr, int);
-int connectionAddData(HTTPConnectionPtr connection, int skip);
-int 
-httpWriteRequest(HTTPConnectionPtr connection, HTTPRequestPtr request, int);
-
 void listServers(FILE*);

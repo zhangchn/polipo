@@ -48,6 +48,69 @@ static int initParentProxy(void);
 static int parentProxySetter(ConfigVariablePtr var, void *value);
 static void httpServerDelayedFinish(HTTPConnectionPtr);
 static int allowUnalignedRangeRequests = 0;
+//void httpServerAbortHandler(ObjectPtr object);
+static int httpServerQueueRequest(HTTPServerPtr server, HTTPRequestPtr request);
+static int httpServerTrigger(HTTPServerPtr server);
+static int httpServerSideRequest(HTTPServerPtr server);
+static int httpServerSideHandler(int status,
+                          FdEventHandlerPtr event,
+                          StreamRequestPtr srequest);
+static int httpServerSideHandler2(int status,
+                           FdEventHandlerPtr event,
+                           StreamRequestPtr srequest);
+int httpServerConnectionDnsHandler(int status, 
+                                   GethostbynameRequestPtr request);
+int httpServerConnectionHandler(int status,
+                                FdEventHandlerPtr event,
+                                ConnectRequestPtr request);
+int httpServerSocksHandler(int status, SocksRequestPtr request);
+int httpServerConnectionHandlerCommon(int status,
+                                      HTTPConnectionPtr connection);
+void httpServerFinish(HTTPConnectionPtr connection, int s, int offset);
+
+void httpServerReply(HTTPConnectionPtr connection, int immediate);
+void httpServerAbort(HTTPConnectionPtr connection, int, int, struct _Atom *);
+void httpServerAbortRequest(HTTPRequestPtr request, int, int, struct _Atom *);
+void httpServerUnpipeline(HTTPRequestPtr request);
+static int
+httpServerSendRequest(HTTPConnectionPtr connection);
+static int
+httpServerHandler(int status, 
+                    FdEventHandlerPtr event,
+                    StreamRequestPtr request);
+static int
+httpServerReplyHandler(int status,
+                       FdEventHandlerPtr event, 
+                       StreamRequestPtr request);
+static int
+httpServerIndirectHandler(int status,
+                          FdEventHandlerPtr event, 
+                          StreamRequestPtr request);
+static int
+httpServerDirectHandler(int status,
+                        FdEventHandlerPtr event, 
+                        StreamRequestPtr request);
+static int
+httpServerDirectHandler2(int status,
+                         FdEventHandlerPtr event, 
+                         StreamRequestPtr request);
+static int 
+httpServerHandlerHeaders(int eof,
+                             FdEventHandlerPtr event,
+                             StreamRequestPtr request, 
+                             HTTPConnectionPtr connection);
+static int 
+httpServerReadData(HTTPConnectionPtr, int);
+static int 
+connectionAddData(HTTPConnectionPtr connection, int skip);
+static int 
+httpWriteRequest(HTTPConnectionPtr connection, HTTPRequestPtr request, int);
+
+
+static int 
+httpMakeServerRequest(char *name, int port, ObjectPtr object, 
+                        int method, int from, int to,
+                        HTTPRequestPtr requestor);
 
 void
 preinitServer(void)
@@ -324,7 +387,7 @@ getServer(char *name, int port, int proxy)
     return server;
 }
 
-int
+static int
 httpServerQueueRequest(HTTPServerPtr server, HTTPRequestPtr request)
 {
     assert(request->request && request->request->request == request);
@@ -394,7 +457,7 @@ httpServerClientReset(HTTPRequestPtr request)
 }
 
 
-int
+static int
 httpMakeServerRequest(char *name, int port, ObjectPtr object, 
                   int method, int from, int to, HTTPRequestPtr requestor)
 {
@@ -795,7 +858,7 @@ httpServerGetConnection(HTTPServerPtr server, int *idle_return)
     return NULL;
 }
 
-int
+static int
 httpServerTrigger(HTTPServerPtr server)
 {
     HTTPConnectionPtr connection;
@@ -916,7 +979,7 @@ httpServerTrigger(HTTPServerPtr server)
     return 1;
 }
 
-int
+static int
 httpServerSideRequest(HTTPServerPtr server)
 {
     HTTPRequestPtr request = server->request;
@@ -1145,7 +1208,7 @@ httpServerSideHandlerCommon(int kind, int status,
     return 1;
 }
 
-int
+static int
 httpServerSideHandler(int status,
                       FdEventHandlerPtr event,
                       StreamRequestPtr srequest)
@@ -1153,7 +1216,7 @@ httpServerSideHandler(int status,
     return httpServerSideHandlerCommon(1, status, event, srequest);
 }
 
-int
+static int
 httpServerSideHandler2(int status,
                        FdEventHandlerPtr event,
                        StreamRequestPtr srequest)
@@ -1530,7 +1593,7 @@ httpServerRequest(ObjectPtr object, int method, int from, int to,
     return 1;
 }
 
-int
+static int
 httpWriteRequest(HTTPConnectionPtr connection, HTTPRequestPtr request,
                  int bodylen)
 {
@@ -1727,7 +1790,7 @@ httpWriteRequest(HTTPConnectionPtr connection, HTTPRequestPtr request,
     return -1;
 }
 
-int
+static int
 httpServerHandler(int status,
                   FdEventHandlerPtr event,
                   StreamRequestPtr srequest)
@@ -1770,7 +1833,7 @@ httpServerHandler(int status,
     return 1;
 }
 
-int
+static int
 httpServerSendRequest(HTTPConnectionPtr connection)
 {
     assert(connection->server);
@@ -1791,7 +1854,7 @@ httpServerSendRequest(HTTPConnectionPtr connection)
     return 1;
 }
 
-int
+static int
 httpServerReplyHandler(int status,
                        FdEventHandlerPtr event, 
                        StreamRequestPtr srequest)
@@ -1867,7 +1930,7 @@ httpServerReplyHandler(int status,
     return 0;
 }
 
-int
+static int
 httpServerHandlerHeaders(int eof,
                          FdEventHandlerPtr event,
                          StreamRequestPtr srequest, 
@@ -2469,7 +2532,7 @@ httpServerIndirectHandlerCommon(HTTPConnectionPtr connection, int eof)
     }
 }
 
-int
+static int
 httpServerIndirectHandler(int status,
                           FdEventHandlerPtr event, 
                           StreamRequestPtr srequest)
@@ -2491,7 +2554,7 @@ httpServerIndirectHandler(int status,
     return httpServerIndirectHandlerCommon(connection, status);
 }
 
-int
+static int
 httpServerReadData(HTTPConnectionPtr connection, int immediate)
 {
     HTTPRequestPtr request = connection->request;
@@ -2677,7 +2740,7 @@ httpServerDirectHandlerCommon(int kind, int status,
     }
 }
 
-int
+static int
 httpServerDirectHandler(int status,
                         FdEventHandlerPtr event, 
                         StreamRequestPtr srequest)
@@ -2685,7 +2748,7 @@ httpServerDirectHandler(int status,
     return httpServerDirectHandlerCommon(1, status, event, srequest);
 }
     
-int
+static int
 httpServerDirectHandler2(int status,
                          FdEventHandlerPtr event, 
                          StreamRequestPtr srequest)
@@ -2697,7 +2760,7 @@ httpServerDirectHandler2(int status,
    connection->request.  Returns 0 in the normal case, 1 if the TE is
    self-terminating and we're done, -1 if there was a problem with
    objectAddData, -2 if there was a problem with the data. */
-int
+static int
 connectionAddData(HTTPConnectionPtr connection, int skip)
 {
     HTTPRequestPtr request = connection->request;
