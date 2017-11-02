@@ -406,11 +406,13 @@ httpMakeServerRequest(char *name, int port, ObjectPtr object,
 
 
     int bypassed = hostNameIsBypassed(name);
+#if DEBUG
     if (bypassed) {
         fprintf(stderr, "bypassed======= %s\n", name); 
     } else {
         fprintf(stderr, "NO BYPASS>>>>>> %s\n", name);
     }
+#endif
     if(parentHost && !bypassed) {
         server = getServer(parentHost->string, parentPort, 1);
     } else {
@@ -522,7 +524,9 @@ httpServerConnection(HTTPServerPtr server)
     do_log(D_SERVER_CONN, "C... %s:%d.\n",
            scrub(connection->server->name), connection->server->port);
     httpSetTimeout(connection, serverTimeout);
-    if(socksParentProxy) {
+    int useSocks = socksParentProxy && !hostNameIsBypassed(server->name);
+     
+    if(useSocks) {
         connection->connecting = CONNECTING_SOCKS;
         do_socks_connect(server->name, connection->server->port,
                          httpServerSocksHandler, connection);
