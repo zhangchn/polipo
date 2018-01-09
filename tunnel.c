@@ -179,13 +179,16 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
         return;
     }
 
-    int useSocks = socksParentProxy && !hostNameIsBypassed(tunnel->hostname->string);
+    int bypassed = hostNameIsBypassed(tunnel->hostname->string);
      
     logTunnel(tunnel,0);
     
     releaseAtom(url);
 
-    if(useSocks)
+    if(bypassed)
+        do_gethostbyname(tunnel->hostname->string, 0,
+                         tunnelDnsHandler, tunnel);
+    else if(socksParentProxy)
         do_socks_connect(parentHost ?
                          parentHost->string : tunnel->hostname->string,
                          parentHost ? parentPort : tunnel->port,
@@ -217,8 +220,11 @@ tunnelDnsHandler(int status, GethostbynameRequestPtr request)
         return 1;
     }
 
+    int bypassed = hostNameIsBypassed(tunnel->hostname->string);
+    fprintf(stderr, "will do_connect: %s ", request->name->string);
+    fprintf(stderr, bypassed ? "bypassed\n" : "\n");
     do_connect(retainAtom(request->addr), 0,
-               parentHost ? parentPort : tunnel->port,
+               (parentHost && !bypassed) ? parentPort : tunnel->port,
                tunnelConnectionHandler, tunnel);
     return 1;
 }
