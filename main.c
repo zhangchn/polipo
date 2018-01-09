@@ -132,14 +132,14 @@ main(int argc, char **argv)
     initObject();
     if(!expire && !printConfig)
         initEvents();
-    initIo();
+    initIo();// No-op
     initDns();
     initHttp();
     initServer();
     initDiskcache();
     initForbidden();
     initBypass();
-    initSocks();
+    initSocks(); // No-op
 
     if(printConfig) {
         printConfigVariables(stdout, 0);

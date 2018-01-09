@@ -34,6 +34,9 @@ int useTemporarySourceAddress = 1;
 
 AtomPtr proxyOutgoingAddress = NULL;
 
+int do_scheduled_stream(int, FdEventHandlerPtr);
+int do_scheduled_connect(int, FdEventHandlerPtr event);
+int do_scheduled_accept(int, FdEventHandlerPtr event);
 void
 preinitIo()
 {
@@ -456,7 +459,7 @@ serverSocket(int af)
             return -1;
         }
 #ifdef HAVE_IPV6_PREFER_TEMPADDR
-	if (af == 6 && useTemporarySourceAddress != 1) {
+        if (af == 6 && useTemporarySourceAddress != 1) {
             int value;
             value = (useTemporarySourceAddress == 2) ? 1 : 0;
             rc = setsockopt(fd, IPPROTO_IPV6, IPV6_PREFER_TEMPADDR,
@@ -465,7 +468,7 @@ serverSocket(int af)
                 /* no error, warning only */
                 do_log_error(L_WARN, errno, "Couldn't set IPV6CTL_USETEMPADDR");
             }
-	}
+        }
 
 #endif
     }

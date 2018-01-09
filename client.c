@@ -22,6 +22,7 @@ THE SOFTWARE.
 
 #include "polipo.h"
 
+static int httpClientHandler(int, FdEventHandlerPtr, StreamRequestPtr);
 static int 
 httpAcceptAgain(TimeEventHandlerPtr event)
 {
@@ -354,7 +355,7 @@ httpClientDelayedShutdownHandler(TimeEventHandlerPtr event)
     return 1;
 }
 
-int
+static int
 httpClientHandler(int status,
                   FdEventHandlerPtr event, StreamRequestPtr request)
 {

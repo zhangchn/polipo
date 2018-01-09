@@ -119,7 +119,6 @@ schedule_stream(int operation, int fd, int offset,
                 int (*handler)(int, FdEventHandlerPtr, StreamRequestPtr),
                 void *data);
 
-int do_scheduled_stream(int, FdEventHandlerPtr);
 int streamRequestDone(StreamRequestPtr);
 
 FdEventHandlerPtr
@@ -127,7 +126,6 @@ do_connect(struct _Atom *addr, int index, int port,
            int (*handler)(int, FdEventHandlerPtr, ConnectRequestPtr),
            void *data);
 
-int do_scheduled_connect(int, FdEventHandlerPtr event);
 
 FdEventHandlerPtr
 do_accept(int fd,
@@ -139,7 +137,6 @@ schedule_accept(int fd,
                 int (*handler)(int, FdEventHandlerPtr, AcceptRequestPtr),
                 void* data);
 
-int do_scheduled_accept(int, FdEventHandlerPtr event);
 
 FdEventHandlerPtr
 create_listener(char *address, int port,

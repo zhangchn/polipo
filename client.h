@@ -22,8 +22,8 @@ THE SOFTWARE.
 
 int httpAccept(int, FdEventHandlerPtr, AcceptRequestPtr);
 void httpClientFinish(HTTPConnectionPtr connection, int s);
-int httpClientHandler(int, FdEventHandlerPtr, StreamRequestPtr);
-int httpClientNoticeError(HTTPRequestPtr, int code, struct _Atom *message);
+//int httpClientHandler(int, FdEventHandlerPtr, StreamRequestPtr);
+//int httpClientNoticeError(HTTPRequestPtr, int code, struct _Atom *message);
 int httpClientError(HTTPRequestPtr, int code, struct _Atom *message);
 int httpClientNewError(HTTPConnectionPtr, int method, int persist, 
                        int code, struct _Atom *message);
@@ -59,6 +59,6 @@ int httpServeObjectStreamHandler2(int status,
                                   StreamRequestPtr request);
 int httpServeObjectHandler(int, ConditionHandlerPtr);
 int httpClientSideRequest(HTTPRequestPtr request);
-int  httpClientSideHandler(int status,
+int httpClientSideHandler(int status,
                            FdEventHandlerPtr event,
                            StreamRequestPtr srequest);

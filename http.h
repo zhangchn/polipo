@@ -162,7 +162,6 @@ char *httpMessage(int) ATTRIBUTE((pure));
 int htmlString(char *buf, int n, int len, char *s, int slen);
 void htmlPrint(FILE *out, char *s, int slen);
 HTTPConnectionPtr httpMakeConnection(void);
-void httpDestroyConnection(HTTPConnectionPtr connection);
 void httpConnectionDestroyBuf(HTTPConnectionPtr connection);
 void httpConnectionDestroyReqbuf(HTTPConnectionPtr connection);
 HTTPRequestPtr httpMakeRequest(void);
