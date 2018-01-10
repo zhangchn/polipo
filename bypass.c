@@ -34,7 +34,6 @@ typedef struct _Domain {
 
 AtomPtr bypassFile = NULL;
 AtomPtr bypassUrl = NULL;
-int bypassRedirectCode = 302;
 
 DomainPtr *bypassDomains = NULL;
 regex_t *bypassRegex = NULL;
@@ -50,35 +49,13 @@ regex_t *bypassTunnelsRegex = NULL;
 //static char *regexbuf;
 //static int rlen, rsize, dlen, dsize;
 
-#ifndef NO_REDIRECTOR
-//static pid_t redirector_pid = 0;
-//static int redirector_read_fd = -1, redirector_write_fd = -1;
-#define REDIRECTOR_BUFFER_SIZE 1024
-//static char *redirector_buffer = NULL;
-//RedirectRequestPtr redirector_request_first = NULL,
-//    redirector_request_last = NULL;
-#endif
-
 static int atomSetterBypass(ConfigVariablePtr, void*);
 
 void
 preinitBypass(void)
 {
-    CONFIG_VARIABLE_SETTABLE(bypassUrl, CONFIG_ATOM, configAtomSetter,
-                             "URL to which bypass requests "
-                             "should be redirected.");
-    CONFIG_VARIABLE_SETTABLE(bypassRedirectCode, CONFIG_INT,
-                             configIntSetter,
-                             "Redirect code, 301 or 302.");
     CONFIG_VARIABLE_SETTABLE(bypassFile, CONFIG_ATOM, atomSetterBypass,
                              "File specifying bypass URLs.");
-#ifndef NO_REDIRECTOR
-    //CONFIG_VARIABLE_SETTABLE(redirector, CONFIG_ATOM, atomSetterBypass,
-    //                         "Squid-style redirector.");
-    //CONFIG_VARIABLE_SETTABLE(redirectorRedirectCode, CONFIG_INT,
-    //                         configIntSetter,
-    //                         "Redirect code to use with redirector.");
-#endif
     CONFIG_VARIABLE_SETTABLE(bypassTunnelsFile, CONFIG_ATOM, atomSetterBypass,
                              "File specifying bypass tunnels.");
 }
@@ -97,7 +74,7 @@ parseDomainFile(AtomPtr file,
 void
 initBypass(void)
 {
-    redirectorKill();
+    //redirectorKill();
 
     if(bypassFile)
         bypassFile = expandTilde(bypassFile);
