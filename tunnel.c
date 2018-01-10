@@ -221,8 +221,6 @@ tunnelDnsHandler(int status, GethostbynameRequestPtr request)
     }
 
     int bypassed = hostNameIsBypassed(tunnel->hostname->string);
-    fprintf(stderr, "will do_connect: %s ", request->name->string);
-    fprintf(stderr, bypassed ? "bypassed\n" : "\n");
     do_connect(retainAtom(request->addr), 0,
                (parentHost && !bypassed) ? parentPort : tunnel->port,
                tunnelConnectionHandler, tunnel);
