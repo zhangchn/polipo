@@ -126,15 +126,17 @@ hostNameIsBypassed(char *name) {
     DomainPtr *domain;
 
     domain = bypassDomains;
-    while(*domain) {
-        if((*domain)->length <= i  &&
-           (name[i - (*domain)->length - 1] == '.' ||
-            name[i - (*domain)->length - 1] == '/') &&
-           memcmp(name + i - (*domain)->length,
-                  (*domain)->domain,
-                  (*domain)->length) == 0)
-            return 1;
-        domain++;
+    if (domain) {
+        while(*domain) {
+            if((*domain)->length <= i  &&
+               (name[i - (*domain)->length - 1] == '.' ||
+                name[i - (*domain)->length - 1] == '/') &&
+               memcmp(name + i - (*domain)->length,
+                      (*domain)->domain,
+                      (*domain)->length) == 0)
+                return 1;
+            domain++;
+        }
     }
 
     if(bypassRegex)
